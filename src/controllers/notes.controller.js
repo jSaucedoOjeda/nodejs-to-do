@@ -16,13 +16,20 @@ notesController.createNewNote = async (req, res) => {
 
 notesController.renderNotes = async (req, res) => {
     const notes = await Note.find({user: req.user.id}).sort({createdAt:'desc'}).lean();
+    // if(notes.length == 0){
+    //     req.flash('success_msg', 'you have no notes at the moment, try adding one');
+    //     res.redirect('/notes/add');
+    // }else{
+    //     res.render('notes/all-notes', { notes });
+    // }
     res.render('notes/all-notes', { notes });
 }
+
 
 notesController.renderEditForm = async (req, res) => {
     const note = await Note.findById(req.params.id).lean();
     if(note.user != req.user.id){
-        req.flash('error_msg', 'Not Authorized')
+        req.flash('error_msg', 'Not Authorized');
         return res.redirect('/notes');
     }
     res.render('notes/edit-note', { note });
